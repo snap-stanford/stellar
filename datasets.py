@@ -23,7 +23,6 @@ class CodexGraphDataset(InMemoryDataset):
     def get_edge_index(self, pos):
         edge_list = []
         num_samples = len(pos)
-        pos = np.zeros([num_samples, 2])
         dists = sklearn.metrics.pairwise_distances(pos)
         for i in range(num_samples):
             for j in range(i+1, num_samples):

@@ -10,11 +10,13 @@ def main():
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--wd', type=float, default=5e-2)
-    parser.add_argument('--input-dim', type=int, default=40)
-    parser.add_argument('--num-heads', type=int, default=20)
+    parser.add_argument('--input-dim', type=int, default=44)
+    parser.add_argument('--num-heads', type=int, default=13)
     parser.add_argument('-b', '--batch-size', default=1, type=int,
                     metavar='N',
                     help='mini-batch size')
+    parser.add_argument('--distance_thres', default=50, type=int)
+    parser.add_argument('--savedir', type=str, default='./')
     args = parser.parse_args()
     args.cuda = torch.cuda.is_available()
     args.device = torch.device("cuda" if args.cuda else "cpu")

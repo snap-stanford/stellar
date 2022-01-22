@@ -94,9 +94,9 @@ class STELLAR:
             ones = torch.ones_like(pos_sim)
             bce_loss = bce(pos_sim, ones)
             ce_loss = ce(output[:labeled_len], target)
-            entropy_loss = entropy(torch.mean(prob, 0))
+            entropy_loss = entropy(torch.mean(prob[labeled_len:], 0))
             
-            loss = 1 * bce_loss + 1 * ce_loss - 0.3 * entropy_loss
+            loss = 1 * bce_loss + 1 * ce_loss - 0.15 * entropy_loss
 
             bce_losses.update(bce_loss.item(), batch_size)
             ce_losses.update(ce_loss.item(), batch_size)
