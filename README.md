@@ -1,6 +1,10 @@
 # Annotation of Spatially Resolved Single-cell Data with STELLAR
 
-This repo contains the reference source code in PyTorch for STELLAR.
+PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type discovery and identification in spatially resolved single-cell datasets. It is able to discover cell types that have never been seen before and characterize experiments that are yet unannotated. For a detailed description of the algorithm, please see our manuscript [Annotation of Spatially Resolved Single-cell Data with STELLAR](https://www.biorxiv.org/content/10.1101/2021.11.24.469947v1.full.pdf).
+
+<p align="center">
+<img src="https://github.com/snap-stanford/stellar/blob/master/images/STELALR_overview.png" width="1100" align="center">
+</p>
 
 ### Dependencies
 - [PyTorch](https://pytorch.org/)
