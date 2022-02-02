@@ -10,26 +10,48 @@ PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type 
 
 
 ### Dependencies
-- [PyTorch](https://pytorch.org/)
-- [PyG](https://pytorch-geometric.readthedocs.io/en/latest/)
-- [sklearn](https://scikit-learn.org/)
+
+STELLAR requires the following packages. We test our software on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU. Please check the requirements.txt file for more details on required Python packages. 
+
+- [PyTorch==1.9](https://pytorch.org/)
+- [PyG==1.9](https://pytorch-geometric.readthedocs.io/en/latest/)
+- [sklearn==1.0.1](https://scikit-learn.org/)
 
 ### Getting started
 
 We implemented STELLAR model in a self-contained class. To make an instance and train STELLAR:
 
 ```
-stellar = STELLAR(args, labeled_X, labeled_y, unlabeled_X, labeled_pos, unlabeled_pos)
+stellar = STELLAR(args, dataset)
 stellar.train()
 _, results = stellar.pred()
 ```
 
-## Datasets
+### Datasets
 
-CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk).
+CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ `.
 
+### Demo
 
-## Citing
+We provide several training examples with this repo:
+
+- To predict with the CODEX data
+
+```bash
+python STELLAR_run.py --dataset CODEX --input-dim 48 --num-heads 22
+```
+
+- To predict with the TonsilBE data
+
+```bash
+python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 32
+```
+
+### Use your own dataset
+
+Please refer to `load_codex_data()` and implement your own loader and construct the dataset.
+
+### Citing
 
 If you find our code and research useful, please consider citing:
 

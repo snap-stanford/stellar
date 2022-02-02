@@ -1,17 +1,20 @@
 import argparse
-from utils import prepare_save_dir, create_logger, save_logger
+from utils import prepare_save_dir
 from STELLAR import STELLAR
+import numpy as np
+import torch
+from datasets import CodexGraphDataset, load_tonsilbe_data, load_codex_data
 
 def main():
     parser = argparse.ArgumentParser(description='STELLAR')
-    parser.add_argument('--dataset', default='codex', help='dataset setting')
+    parser.add_argument('--dataset', default='CODEX', help='dataset setting')
     parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
     parser.add_argument('--name', type=str, default='STELLAR')
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--wd', type=float, default=5e-2)
-    parser.add_argument('--input-dim', type=int, default=44)
-    parser.add_argument('--num-heads', type=int, default=13)
+    parser.add_argument('--input-dim', type=int, default=48)
+    parser.add_argument('--num-heads', type=int, default=22)
     parser.add_argument('-b', '--batch-size', default=1, type=int,
                     metavar='N',
                     help='mini-batch size')
@@ -24,11 +27,16 @@ def main():
     # Seed the run and create saving directory
     args.name = '_'.join([args.dataset, args.name])
     args = prepare_save_dir(args, __file__)
-
-    stellar = STELLAR(args, labeled_X, labeled_y, unlabeled_X, labeled_pos, unlabeled_pos)
+    
+    if args.dataset == 'CODEX':
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_codex_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres)
+        dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
+    elif args.dataset == 'TonsilBE':
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_tonsilbe_data('./data/BE_Tonsil_dryad.csv', args.distance_thres)
+        dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
+    stellar = STELLAR(args, dataset)
     stellar.train()
     _, results = stellar.pred()
-
 
 if __name__ == '__main__':
     main()

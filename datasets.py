@@ -3,37 +3,79 @@ import numpy as np
 from builtins import range
 from torch_geometric.data import InMemoryDataset, Data
 import sklearn
+import pandas as pd
+
+def get_codex_edge_index(pos, regions, distance_thres):
+    edge_list = []
+    regions_unique = np.unique(regions)
+    for reg in regions_unique:
+        locs = np.where(regions == reg)[0]
+        pos_region = pos[locs, :]
+        dists = sklearn.metrics.pairwise_distances(pos_region)
+        dists_mask = dists < distance_thres
+        np.fill_diagonal(dists_mask, 0)
+        region_edge_list = np.transpose(np.nonzero(dists_mask)).tolist()
+        for (i, j) in region_edge_list:
+            edge_list.append([locs[i], locs[j]])
+    return edge_list
+
+def get_tonsilbe_edge_index(pos, distance_thres):
+    edge_list = []
+    dists = sklearn.metrics.pairwise_distances(pos)
+    dists_mask = dists < distance_thres
+    np.fill_diagonal(dists_mask, 0)
+    edge_list = np.transpose(np.nonzero(dists_mask)).tolist()
+    return edge_list
+
+def load_codex_data(labeled_file, unlabeled_file, distance_thres):
+    train_df = pd.read_csv(labeled_file)
+    test_df = pd.read_csv(unlabeled_file)
+    train_df = train_df.loc[np.logical_and(train_df['tissue'] == 'CL', train_df['donor'] == 'B004')]
+    test_df = test_df.loc[np.logical_and(test_df['tissue'] == 'CL', test_df['donor'] == 'B005')]
+    train_X = train_df.iloc[:, 1:49].values
+    test_X = test_df.iloc[:, 1:49].values
+    labeled_pos = train_df.iloc[:, -6:-4].values
+    unlabeled_pos = test_df.iloc[:, -5:-3].values
+    labeled_regions = train_df['unique_region']
+    unlabeled_regions = test_df['unique_region']
+    train_y = train_df['cell_type_A']
+    cell_types = np.sort(list(set(train_df['cell_type_A'].values))).tolist()
+    cell_type_dict = {}
+    for i, cell_type in enumerate(cell_types):
+        cell_type_dict[cell_type] = i
+    train_y = np.array([cell_type_dict[x] for x in train_y])
+    labeled_edges = get_codex_edge_index(labeled_pos, labeled_regions, distance_thres)
+    unlabeled_edges = get_codex_edge_index(unlabeled_pos, unlabeled_regions, distance_thres)
+    return train_X, train_y, test_X, labeled_edges, unlabeled_edges
+
+def load_tonsilbe_data(filename, distance_thres):
+    df = pd.read_csv(filename)
+    train_df = df.loc[df['sample_name'] == 'tonsil']
+    test_df = df.loc[df['sample_name'] == 'Barretts Esophagus']
+    train_X = train_df.iloc[:, 1:-4].values
+    test_X = test_df.iloc[:, 1:-4].values
+    train_y = train_df['final_cell_type']
+    labeled_pos = train_df.iloc[:, -4:-2].values
+    unlabeled_pos = test_df.iloc[:, -4:-2].values
+    cell_types = np.sort(list(set(train_df['final_cell_type'].values))).tolist()
+    cell_type_dict = {}
+    for i, cell_type in enumerate(cell_types):
+        cell_type_dict[cell_type] = i
+    train_y = np.array([cell_type_dict[x] for x in train_y])
+    labeled_edges = get_tonsilbe_edge_index(labeled_pos, distance_thres)
+    unlabeled_edges = get_tonsilbe_edge_index(unlabeled_pos, distance_thres)
+    return train_X, train_y, test_X, labeled_edges, unlabeled_edges
 
 class CodexGraphDataset(InMemoryDataset):
 
-    def __init__(self, labeled_X, labeled_y, unlabeled_X, labeled_pos=None, unlabeled_pos=None, distance_thres=None, transform=None,):
-        super(CodexGraphDataset, self).__init__()
-        self.distance_thres = distance_thres
-        if labeled_pos and unlabeled_pos:
-            labeled_edge_index = self.get_edge_index(labeled_pos)
-            unlabeled_edge_index = self.get_edge_index(unlabeled_pos)
-        else:
-            labeled_edge_index = None
-            unlabeled_edge_index = None
-
-        self.labeled_data = Data(x=torch.FloatTensor(labeled_X), edge_index=labeled_edge_index, y=torch.LongTensor(labeled_y))
-        self.unlabeled_data = Data(x=torch.FloatTensor(unlabeled_X), edge_index=unlabeled_edge_index)
-
-        
-    def get_edge_index(self, pos):
-        edge_list = []
-        num_samples = len(pos)
-        dists = sklearn.metrics.pairwise_distances(pos)
-        for i in range(num_samples):
-            for j in range(i+1, num_samples):
-                if dists[i,j] < self.distance_thres:
-                    edge_list.append([i,j])
-                    edge_list.append([j,i])
-        return torch.LongTensor(edge_list).T
+    def __init__(self, labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges, transform=None,):
+        self.root = '.'
+        super(CodexGraphDataset, self).__init__(self.root, transform)
+        self.labeled_data = Data(x=torch.FloatTensor(labeled_X), edge_index=torch.LongTensor(labeled_edges).T, y=torch.LongTensor(labeled_y))
+        self.unlabeled_data = Data(x=torch.FloatTensor(unlabeled_X), edge_index=torch.LongTensor(unlabeled_edges).T)
 
     def __len__(self):
         return 2
 
     def __getitem__(self, idx):
         return self.labeled_data, self.unlabeled_data
-

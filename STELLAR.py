@@ -3,22 +3,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import models
-import datasets
-from utils import cluster_acc, AverageMeter, write_txt, entropy, MarginLoss, accuracy
-from sklearn import metrics
+from utils import entropy, MarginLoss
 import numpy as np
-import os
-from torch.utils.tensorboard import SummaryWriter
 from itertools import cycle
-import pickle
 import copy
 from torch_geometric.data import ClusterData, ClusterLoader
 
 class STELLAR:
 
-    def __init__(self, args, labeled_X, labeled_y, unlabeled_X, labeled_pos=None, unlabeled_pos=None):
+    def __init__(self, args, dataset):
         self.args = args
-        self.dataset = datasets.CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_pos, unlabeled_pos, self.args.distance_thres)
+        self.dataset = dataset
         self.model = models.Encoder(args.input_dim, args.num_heads)
         self.model = self.model.to(args.device)
 
@@ -28,11 +23,6 @@ class STELLAR:
         bce = nn.BCELoss()
         ce = MarginLoss(m=-m)
         sum_loss = 0
-        bce_losses = AverageMeter('bce_loss', ':.4e')
-        ce_losses = AverageMeter('ce_loss', ':.4e')
-        entropy_losses = AverageMeter('entropy_loss', ':.4e')
-        seen_uncerts = AverageMeter('seen_uncert', ':.4e')
-        unseen_uncerts = AverageMeter('unseen_conf', ':.4e')
 
         labeled_graph, unlabeled_graph = dataset.labeled_data, dataset.unlabeled_data
         labeled_data = ClusterData(labeled_graph, num_parts=100, recursive=False)
@@ -60,14 +50,6 @@ class STELLAR:
             feat_norm = feat_detach / torch.norm(feat_detach, 2, 1, keepdim=True)
             cosine_dist = torch.mm(feat_norm, feat_norm.t())
 
-            # record uncert
-            conf, _ = prob.max(1)
-            conf = conf.detach()
-            seen_conf = conf[:labeled_len]
-            unseen_conf = conf[labeled_len:]
-            seen_uncerts.update(1 - seen_conf.mean().item(), batch_size)
-            unseen_uncerts.update(1 - unseen_conf.mean().item(), batch_size)
-
             pos_pairs = []
             target = labeled_x.y
             target_np = target.cpu().numpy()
@@ -88,7 +70,6 @@ class STELLAR:
             pos_idx = pos_idx[:, 1].cpu().numpy().flatten().tolist()
             pos_pairs.extend(pos_idx)
             
-            # Clustering and consistency losses
             pos_prob = prob[pos_pairs, :]
             pos_sim = torch.bmm(prob.view(batch_size, 1, -1), pos_prob.view(batch_size, -1, 1)).squeeze()
             ones = torch.ones_like(pos_sim)
@@ -98,9 +79,6 @@ class STELLAR:
             
             loss = 1 * bce_loss + 1 * ce_loss - 0.15 * entropy_loss
 
-            bce_losses.update(bce_loss.item(), batch_size)
-            ce_losses.update(ce_loss.item(), batch_size)
-            entropy_losses.update(entropy_loss.item(), batch_size)
             optimizer.zero_grad()
             sum_loss += loss.item()
             loss.backward()
@@ -109,8 +87,6 @@ class STELLAR:
             if batch_idx % (len(labeled_loader) // 4) == 0:
                 print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)
                 ))
-
-        write_txt(args, f"labeled uncert: {seen_uncerts.avg} unseen uncert: {unseen_uncerts.avg}")
 
 
     def pred(self):
