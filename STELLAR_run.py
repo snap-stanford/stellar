@@ -3,7 +3,7 @@ from utils import prepare_save_dir
 from STELLAR import STELLAR
 import numpy as np
 import torch
-from datasets import CodexGraphDataset, load_tonsilbe_data, load_codex_data
+from datasets import CodexGraphDataset, load_tonsilbe_data, load_hubmap_data
 
 def main():
     parser = argparse.ArgumentParser(description='STELLAR')
@@ -28,8 +28,8 @@ def main():
     args.name = '_'.join([args.dataset, args.name])
     args = prepare_save_dir(args, __file__)
     
-    if args.dataset == 'CODEX':
-        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_codex_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres)
+    if args.dataset == 'Hubmap':
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_hubmap_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres)
         dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
     elif args.dataset == 'TonsilBE':
         labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_tonsilbe_data('./data/BE_Tonsil_dryad.csv', args.distance_thres)

@@ -5,7 +5,7 @@ from torch_geometric.data import InMemoryDataset, Data
 import sklearn
 import pandas as pd
 
-def get_codex_edge_index(pos, regions, distance_thres):
+def get_hubmap_edge_index(pos, regions, distance_thres):
     edge_list = []
     regions_unique = np.unique(regions)
     for reg in regions_unique:
@@ -27,7 +27,7 @@ def get_tonsilbe_edge_index(pos, distance_thres):
     edge_list = np.transpose(np.nonzero(dists_mask)).tolist()
     return edge_list
 
-def load_codex_data(labeled_file, unlabeled_file, distance_thres):
+def load_hubmap_data(labeled_file, unlabeled_file, distance_thres):
     train_df = pd.read_csv(labeled_file)
     test_df = pd.read_csv(unlabeled_file)
     train_df = train_df.loc[np.logical_and(train_df['tissue'] == 'CL', train_df['donor'] == 'B004')]
@@ -44,8 +44,8 @@ def load_codex_data(labeled_file, unlabeled_file, distance_thres):
     for i, cell_type in enumerate(cell_types):
         cell_type_dict[cell_type] = i
     train_y = np.array([cell_type_dict[x] for x in train_y])
-    labeled_edges = get_codex_edge_index(labeled_pos, labeled_regions, distance_thres)
-    unlabeled_edges = get_codex_edge_index(unlabeled_pos, unlabeled_regions, distance_thres)
+    labeled_edges = get_hubmap_edge_index(labeled_pos, labeled_regions, distance_thres)
+    unlabeled_edges = get_hubmap_edge_index(unlabeled_pos, unlabeled_regions, distance_thres)
     return train_X, train_y, test_X, labeled_edges, unlabeled_edges
 
 def load_tonsilbe_data(filename, distance_thres):

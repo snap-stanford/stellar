@@ -11,7 +11,7 @@ PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type 
 
 ### Dependencies
 
-STELLAR requires the following packages. We test our software on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU. Please check the requirements.txt file for more details on required Python packages. 
+STELLAR requires the following packages. We test our software on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU. Please check the [requirements.txt](https://github.com/snap-stanford/stellar/blob/main/requirements.txt) file for more details on required Python packages. 
 
 - [PyTorch==1.9](https://pytorch.org/)
 - [PyG==1.9](https://pytorch-geometric.readthedocs.io/en/latest/)
@@ -26,7 +26,6 @@ stellar = STELLAR(args, dataset)
 stellar.train()
 _, results = stellar.pred()
 ```
-
 ### Datasets
 
 CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ `.
@@ -35,13 +34,13 @@ CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s eso
 
 We provide several training examples with this repo:
 
-- To predict with the CODEX data
+- To run STELLAR on the CODEX healthy intestine data
 
 ```bash
-python STELLAR_run.py --dataset CODEX --input-dim 48 --num-heads 22
+python STELLAR_run.py --dataset Hubmap --input-dim 48 --num-heads 22
 ```
 
-- To predict with the TonsilBE data
+- To run STELLAR on the CODEX tonsil and BE data:
 
 ```bash
 python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 32
@@ -49,7 +48,7 @@ python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 32
 
 ### Use your own dataset
 
-Please refer to `load_codex_data()` and implement your own loader and construct the dataset.
+Please refer to `load_hubmap_data()` and implement your own loader and construct the dataset.
 
 ### Citing
 
