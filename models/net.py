@@ -34,3 +34,13 @@ class Encoder(nn.Module):
         out_feat = x
         out = self.linear(x)
         return out, feat, out_feat
+    
+class FCNet(nn.Module):
+    def __init__(self, x_dim, num_cls):
+        super(FCNet, self).__init__()
+        self.linear = NormedLinear(x_dim, num_cls)
+
+    def forward(self, data):
+        x = data.x
+        out = self.linear(x)
+        return out, x, x

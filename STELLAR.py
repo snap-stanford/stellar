@@ -8,6 +8,8 @@ import numpy as np
 from itertools import cycle
 import copy
 from torch_geometric.data import ClusterData, ClusterLoader
+import scanpy as sc
+from anndata import AnnData
 
 class STELLAR:
 
@@ -16,6 +18,57 @@ class STELLAR:
         self.dataset = dataset
         self.model = models.Encoder(args.input_dim, args.num_heads)
         self.model = self.model.to(args.device)
+
+    def train_supervised(self, args, model, device, dataset, optimizer, epoch):
+        model.train()
+        ce = nn.CrossEntropyLoss()
+        sum_loss = 0
+
+        labeled_graph = dataset.labeled_data
+        labeled_data = ClusterData(labeled_graph, num_parts=100, recursive=False)
+        labeled_loader = ClusterLoader(labeled_data, batch_size=1, shuffle=True,
+                                    num_workers=1)
+
+        for batch_idx, labeled_x in enumerate(labeled_loader):
+            labeled_x = labeled_x.to(device)
+            optimizer.zero_grad()
+            output, _, _ = model(labeled_x)
+            
+            loss = ce(output, labeled_x.y)
+            
+            optimizer.zero_grad()
+            sum_loss += loss.item()
+            loss.backward()
+            optimizer.step()
+            
+            if batch_idx % (len(labeled_loader) // 4) == 0:
+                print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)
+                ))
+
+    def est_seeds(self, args, model, device, dataset, clusters, num_seed_class):
+        model.eval()
+        entrs = np.array([])
+        with torch.no_grad():
+            labeled_graph, unlabeled_graph = dataset.labeled_data, dataset.unlabeled_data
+            unlabeled_graph_cp = copy.deepcopy(unlabeled_graph)
+            unlabeled_graph_cp = unlabeled_graph_cp.to(device)
+            output, _, _ = model(unlabeled_graph_cp)
+            prob = F.softmax(output, dim=1)
+            entr = -torch.sum(prob * torch.log(prob), 1)
+            entrs = np.append(entrs, entr.cpu().numpy())
+        
+        entrs_per_cluster = []
+        for i in range(np.max(clusters)+1):
+            locs = np.where(clusters == i)[0]
+            entrs_per_cluster.append(np.mean(entrs[locs]))
+        entrs_per_cluster = np.array(entrs_per_cluster)
+        novel_cluster_idxs = np.argsort(entrs_per_cluster)[:num_seed_class]
+        novel_label_seeds = np.zeros_like(clusters)
+        largest_seen_id = torch.max(labeled_graph.y)
+        
+        for i, idx in enumerate(novel_cluster_idxs):
+            novel_label_seeds[clusters == idx] = largest_seen_id + i + 1
+        return novel_label_seeds
 
     def train_epoch(self, args, model, device, dataset, optimizer, m, epoch):
         """ Train for 1 epoch."""
@@ -35,6 +88,7 @@ class STELLAR:
 
         for batch_idx, labeled_x in enumerate(labeled_loader):
             unlabeled_x = next(unlabel_loader_iter)
+            unlabeled_ce_idx = torch.where(unlabeled_x.novel_label_seeds>0)[0]
             labeled_x, unlabeled_x = labeled_x.to(device), unlabeled_x.to(device)
             optimizer.zero_grad()
             labeled_output, labeled_feat, _ = model(labeled_x)
@@ -74,10 +128,12 @@ class STELLAR:
             pos_sim = torch.bmm(prob.view(batch_size, 1, -1), pos_prob.view(batch_size, -1, 1)).squeeze()
             ones = torch.ones_like(pos_sim)
             bce_loss = bce(pos_sim, ones)
-            ce_loss = ce(output[:labeled_len], target)
-            entropy_loss = entropy(torch.mean(prob[labeled_len:], 0))
+            ce_idx = torch.cat((torch.arange(labeled_len), labeled_len+unlabeled_ce_idx))
+            target = torch.cat((target, unlabeled_x.novel_label_seeds))
+            ce_loss = ce(output[ce_idx], target[ce_idx])
+            entropy_loss = entropy(torch.mean(prob, 0))
             
-            loss = 1 * bce_loss + 1 * ce_loss - 0.15 * entropy_loss
+            loss = 1 * bce_loss + 1 * ce_loss - 0.3 * entropy_loss
 
             optimizer.zero_grad()
             sum_loss += loss.item()
@@ -107,6 +163,20 @@ class STELLAR:
         return mean_uncert, preds
 
     def train(self):
+        unlabel_x = self.dataset.unlabeled_data.x
+        adata = AnnData(unlabel_x.numpy())
+        sc.pp.neighbors(adata)
+        sc.tl.louvain(adata, 1)
+        clusters = adata.obs['louvain'].values
+        clusters = clusters.astype(int)
+
+        seed_model = models.FCNet(x_dim = self.args.input_dim, num_cls=torch.max(self.dataset.labeled_data.y)+1)
+        seed_model = seed_model.to(self.args.device)
+        seed_optimizer = optim.Adam(seed_model.parameters(), lr=1e-3, weight_decay=5e-2)
+        for epoch in range(20):
+            self.train_supervised(self.args, seed_model, self.args.device, self.dataset, seed_optimizer, epoch)
+        novel_label_seeds = self.est_seeds(self.args, seed_model, self.args.device, self.dataset, clusters, self.args.num_seed_class)
+        self.dataset.unlabeled_data.novel_label_seeds = torch.tensor(novel_label_seeds)
         # Set the optimizer
         optimizer = optim.Adam(self.model.parameters(), lr=self.args.lr, weight_decay=self.args.wd)
 

@@ -15,6 +15,8 @@ def main():
     parser.add_argument('--wd', type=float, default=5e-2)
     parser.add_argument('--input-dim', type=int, default=48)
     parser.add_argument('--num-heads', type=int, default=22)
+    parser.add_argument('--num-seed-class', type=int, default=0)
+    parser.add_argument('--sample-rate', type=float, default=0.1)
     parser.add_argument('-b', '--batch-size', default=1, type=int,
                     metavar='N',
                     help='mini-batch size')
@@ -29,10 +31,10 @@ def main():
     args = prepare_save_dir(args, __file__)
     
     if args.dataset == 'Hubmap':
-        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_hubmap_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres)
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_hubmap_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres, args.sample_rate)
         dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
     elif args.dataset == 'TonsilBE':
-        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_tonsilbe_data('./data/BE_Tonsil_dryad.csv', args.distance_thres)
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_tonsilbe_data('./data/BE_Tonsil_dryad.csv', './data/granularity_tonsil_eso_4_levels.csv', args.distance_thres, args.sample_rate)
         dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
     stellar = STELLAR(args, dataset)
     stellar.train()
