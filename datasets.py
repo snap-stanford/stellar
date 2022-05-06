@@ -52,9 +52,9 @@ def load_hubmap_data(labeled_file, unlabeled_file, distance_thres, sample_rate):
 
 def load_tonsilbe_data(filename, mapping_filename, distance_thres, sample_rate):
     df = pd.read_csv(filename)
-    df_sample = df.sample(n=round(sample_rate*len(df)), random_state=1)
-    train_df = df_sample.loc[df['sample_name'] == 'tonsil']
-    test_df = df_sample.loc[df_sample['sample_name'] == 'Barretts Esophagus']
+    train_df = df.loc[df['sample_name'] == 'tonsil']
+    train_df = train_df.sample(n=round(sample_rate*len(train_df)), random_state=1)
+    test_df = df.loc[df['sample_name'] == 'Barretts Esophagus']
     train_X = train_df.iloc[:, 1:-4].values
     test_X = test_df.iloc[:, 1:-4].values
     train_y = train_df['final_cell_type'].str.lower()
