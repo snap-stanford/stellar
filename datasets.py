@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from builtins import range
 from torch_geometric.data import InMemoryDataset, Data
-import sklearn
+from sklearn.metrics import pairwise_distances
 import pandas as pd
 
 def get_hubmap_edge_index(pos, regions, distance_thres):
@@ -11,7 +11,7 @@ def get_hubmap_edge_index(pos, regions, distance_thres):
     for reg in regions_unique:
         locs = np.where(regions == reg)[0]
         pos_region = pos[locs, :]
-        dists = sklearn.metrics.pairwise_distances(pos_region)
+        dists = pairwise_distances(pos_region)
         dists_mask = dists < distance_thres
         np.fill_diagonal(dists_mask, 0)
         region_edge_list = np.transpose(np.nonzero(dists_mask)).tolist()
@@ -21,7 +21,7 @@ def get_hubmap_edge_index(pos, regions, distance_thres):
 
 def get_tonsilbe_edge_index(pos, distance_thres):
     edge_list = []
-    dists = sklearn.metrics.pairwise_distances(pos)
+    dists = pairwise_distances(pos)
     dists_mask = dists < distance_thres
     np.fill_diagonal(dists_mask, 0)
     edge_list = np.transpose(np.nonzero(dists_mask)).tolist()

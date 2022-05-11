@@ -9,13 +9,41 @@ PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type 
 
 
 
-### Dependencies
+### Installation
 
-STELLAR requires the following packages. We test our software on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU. Please check the [requirements.txt](https://github.com/snap-stanford/stellar/blob/main/requirements.txt) file for more details on required Python packages. 
+**Requirements**
 
-- [PyTorch==1.9](https://pytorch.org/)
-- [PyG==1.7](https://pytorch-geometric.readthedocs.io/en/latest/)
-- [sklearn==1.0.1](https://scikit-learn.org/)
+- NVIDIA GPU, Linux, Python3. We test our software on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU and 1T CPU memory. 
+
+
+**1. Python environment (Optional):**
+We recommend using Conda package manager
+
+```bash
+conda create -n stellar python=3.8
+source activate stellar
+```
+
+**2. Pytorch:**
+Install [PyTorch](https://pytorch.org/). 
+We have verified under PyTorch 1.9.1. For example:
+```bash
+conda install pytorch cudatoolkit=11.3 -c pytorch
+```
+
+**3. Pytorch Geometric:**
+Install [PyTorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html), 
+follow their instructions. We have verified under Pyg 2.0. For example:
+```bash
+conda install pyg -c pyg
+```
+
+**4. Other dependencies:**
+
+Please run the following command to install additional packages.
+```bash
+pip install -r requirements.txt
+```
 
 ### Getting started
 
@@ -46,9 +74,11 @@ python STELLAR_run.py --dataset Hubmap --input-dim 48 --num-heads 22
 python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 13 --num-seed-class 3
 ```
 
+We also provided a jupyter notebook that walks through a downsampled dataset. Please consider downsample more if there's still a memory issue. Note that the performance of the model would degrade as the training data gets less.
+
 ### Use your own dataset
 
-Please refer to `load_hubmap_data()` and implement your own loader and construct the dataset.
+Our stellar function requires node features, corresponding labels and corresponding edges as inputs. Here Node feature matrix should have shape [num_nodes, num_node_features] and edge indexes should have shape [2, num_edges].
 
 ### Citing
 

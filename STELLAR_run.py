@@ -7,7 +7,7 @@ from datasets import CodexGraphDataset, load_tonsilbe_data, load_hubmap_data
 
 def main():
     parser = argparse.ArgumentParser(description='STELLAR')
-    parser.add_argument('--dataset', default='TonsilBE', help='dataset setting')
+    parser.add_argument('--dataset', default='Hubmap', help='dataset setting')
     parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
     parser.add_argument('--name', type=str, default='STELLAR')
     parser.add_argument('--epochs', type=int, default=20)
@@ -16,7 +16,7 @@ def main():
     parser.add_argument('--input-dim', type=int, default=48)
     parser.add_argument('--num-heads', type=int, default=22)
     parser.add_argument('--num-seed-class', type=int, default=0)
-    parser.add_argument('--sample-rate', type=float, default=0.1)
+    parser.add_argument('--sample-rate', type=float, default=0.5)
     parser.add_argument('-b', '--batch-size', default=1, type=int,
                     metavar='N',
                     help='mini-batch size')
