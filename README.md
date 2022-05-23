@@ -74,7 +74,7 @@ python STELLAR_run.py --dataset Hubmap --input-dim 48 --num-heads 22
 python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 13 --num-seed-class 3
 ```
 
-We also provided a jupyter notebook ``demo.ipynb`` that walks through a downsampled dataset. Please consider downsample more if there's still a memory issue. Note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we create another notebook that loads pre-processsed data and can finish with CPU in about 30 mins.
+We also provided a jupyter notebook ``demo.ipynb`` that walks through a downsampled dataset. Please consider downsample more if there's still a memory issue. Note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we create another notebook ``demo_light.ipynb`` that loads pre-processsed data and can finish with CPU in about 30 mins.
 
 ### Use your own dataset
 
