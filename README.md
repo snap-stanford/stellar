@@ -74,11 +74,11 @@ python STELLAR_run.py --dataset Hubmap --input-dim 48 --num-heads 22
 python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 13 --num-seed-class 3
 ```
 
-We also provided a jupyter notebook ``demo.ipynb`` that walks through a downsampled dataset. Please consider downsample more if there's still a memory issue. Note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we create another notebook ``demo_light.ipynb`` that loads pre-processsed data and can finish with CPU in about 30 mins.
+Graph construction takes 32G physical memory for Hubmap and 256G for TonsilBE, the longest construction takes around 10 minutes. Running the algorithm on GPU takes less then 5G memory for both datasets and can finish within a few minutes. We also provided a jupyter notebook ``demo.ipynb`` that walks through a downsampled dataset. Please consider downsample more if there's still a memory issue. Note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we create another notebook ``demo_light.ipynb`` that loads pre-processsed data and can finish with CPU in about 30 mins.
 
 ### Use your own dataset
 
-Our stellar function requires node features, corresponding labels and corresponding edges as inputs. Here Node feature matrix should have shape [num_nodes, num_node_features] and edge indexes should have shape [2, num_edges].
+Our stellar function requires node features, corresponding labels and corresponding edges as inputs. Here Node feature matrix (labeled_X, unlabeled_X) should have shape [num_nodes, num_node_features] and edge indexes (labeled_edges, unlabeled_edges) should have shape [2, num_edges]. labeled_y should have shape [num_nodes,].
 
 ### Citing
 
