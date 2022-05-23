@@ -62,7 +62,10 @@ class STELLAR:
             locs = np.where(clusters == i)[0]
             entrs_per_cluster.append(np.mean(entrs[locs]))
         entrs_per_cluster = np.array(entrs_per_cluster)
-        novel_cluster_idxs = np.argsort(entrs_per_cluster)[-num_seed_class:]
+        if num_seed_class > 0:
+            novel_cluster_idxs = np.argsort(entrs_per_cluster)[-num_seed_class:]
+        else:
+            novel_cluster_idxs = []
         novel_label_seeds = np.zeros_like(clusters)
         largest_seen_id = torch.max(labeled_graph.y)
         

@@ -2,6 +2,7 @@ import argparse
 from utils import prepare_save_dir
 from STELLAR import STELLAR
 import numpy as np
+import os
 import torch
 from datasets import CodexGraphDataset, load_tonsilbe_data, load_hubmap_data
 
@@ -39,6 +40,7 @@ def main():
     stellar = STELLAR(args, dataset)
     stellar.train()
     _, results = stellar.pred()
+    np.save(os.path.join(args.savedir, args.dataset + '_results.npy'), results)
 
 if __name__ == '__main__':
     main()
