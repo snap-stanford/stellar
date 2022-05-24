@@ -77,7 +77,7 @@ Memory usage and time:
 -  Graph construction takes 32G physical memory for the HuBMAP dataset and 256G for Tonsil/BE. The longest construction takes around 10 minutes.
 -  Running the algorithm on GPU takes less then 5G memory for both datasets and can finish within a few minutes.
 
-We also provided a jupyter notebook [demo.ipynb](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo.ipynb) that shows example of running STELLAR on a downsampled dataset. Please consider to downsample more if there is a memory issue, but note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we created another notebook [demo_light.ipynb]([https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo.ipynb](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo_light.ipynb)) that loads pre-processsed data and can finish with CPU in about 30 mins.
+We also provided a jupyter notebook [demo.ipynb](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo.ipynb) that shows example of running STELLAR on a downsampled dataset. Please consider to downsample more if there is a memory issue, but note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, we created another notebook [demo_light.ipynb](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo_light.ipynb) that loads pre-processsed data and can finish with CPU in about 30 mins.
 
 ### Use your own dataset
 
