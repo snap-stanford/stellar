@@ -78,7 +78,17 @@ Graph construction takes 32G physical memory for Hubmap and 256G for TonsilBE, t
 
 ### Use your own dataset
 
-Our stellar function requires node features, corresponding labels and corresponding edges as inputs. Here Node feature matrix (labeled_X, unlabeled_X) should have shape [num_nodes, num_node_features] and edge indexes (labeled_edges, unlabeled_edges) should have shape [2, num_edges]. labeled_y should have shape [num_nodes,].
+To use your own dataset, you just need to initialize [CodexGraphDataset](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L77) and give it to the input to our [stellar function](https://github.com/snap-stanford/stellar/blob/main/STELLAR.py).
+
+```
+dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
+stellar = STELLAR(args, dataset)
+```
+
+Here, labeled_X and unlabeled_X are node features matrices for the annotated reference dataset and target unannotated dataset, respectively. They should  have a shape [num_nodes, num_node_features]  Variable labeled_y defines annotations for the annotated reference dataset with shape [num_nodes,]. Finally,  labeled_edges and unlabeled_edges define the input graphs for the annotated reference dataset and target unannotated dataset, respectively, These two matrices should have a shape [2, num_edges] and they define edges of the graph.
+
+Example for HuBMAP datasets is shown in [load_hubmap_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L30) function, and for Tonsil/BE dataset in [load_tonsilbe_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L53).
+
 
 ### Citing
 
