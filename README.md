@@ -89,7 +89,7 @@ stellar = STELLAR(args, dataset)
 - labeled_y defines annotations for the annotated reference dataset with shape [num_nodes,] 
 - labeled_edges and unlabeled_edges define the input graphs for the annotated reference dataset and target unannotated dataset, respectively. They should have a shape [2, num_edges] and they define edges of the graph
 
-Example for HuBMAP datasets is shown in [load_hubmap_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L30) function, and for Tonsil/BE dataset in [load_tonsilbe_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L53).
+Example for HuBMAP dataset is shown in [load_hubmap_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L30) function, and for Tonsil/BE dataset in [load_tonsilbe_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L53).
 
 
 ### Citing
