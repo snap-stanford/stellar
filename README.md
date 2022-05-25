@@ -8,7 +8,6 @@ PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type 
 </p>
 
 
-
 ### Installation
 
 
@@ -41,7 +40,7 @@ Please run the following command to install additional packages.
 pip install -r requirements.txt
 ```
 
-Note: We tested STELLAR with NVIDIA GPU, Linux, Python3. In particular, on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU and 1T CPU memory. 
+**Note:** We tested STELLAR with NVIDIA GPU, Linux, Python3. In particular, on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU and 1T CPU memory. 
 
 ### Getting started
 
