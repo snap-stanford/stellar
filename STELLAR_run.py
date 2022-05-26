@@ -4,7 +4,7 @@ from STELLAR import STELLAR
 import numpy as np
 import os
 import torch
-from datasets import CodexGraphDataset, load_tonsilbe_data, load_hubmap_data
+from datasets import GraphDataset, load_tonsilbe_data, load_hubmap_data
 
 def main():
     parser = argparse.ArgumentParser(description='STELLAR')
@@ -32,11 +32,11 @@ def main():
     args = prepare_save_dir(args, __file__)
     
     if args.dataset == 'Hubmap':
-        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_hubmap_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres, args.sample_rate)
-        dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges, inverse_dict = load_hubmap_data('./data/B004_training_dryad.csv', './data/B0056_unnanotated_dryad.csv', args.distance_thres, args.sample_rate)
+        dataset = GraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
     elif args.dataset == 'TonsilBE':
-        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges = load_tonsilbe_data('./data/BE_Tonsil_dryad.csv', './data/granularity_tonsil_eso_4_levels.csv', args.distance_thres, args.sample_rate)
-        dataset = CodexGraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
+        labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges, inverse_dict = load_tonsilbe_data('./data/BE_Tonsil_l3_dryad.csv', args.distance_thres, args.sample_rate)
+        dataset = GraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
     stellar = STELLAR(args, dataset)
     stellar.train()
     _, results = stellar.pred()

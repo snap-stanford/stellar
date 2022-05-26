@@ -7,7 +7,7 @@ import torch.nn.functional as F
 def prepare_save_dir(args, filename):
     """ Create saving directory."""
     runner_name = os.path.basename(filename).split(".")[0]
-    model_dir = 'data/experiments/{}/{}/'.format(runner_name, args.name)
+    model_dir = './experiments/{}/{}/'.format(runner_name, args.name)
     args.savedir = model_dir
     if not os.path.exists(args.savedir):
         os.makedirs(args.savedir)
