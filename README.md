@@ -1,6 +1,6 @@
 # Annotation of Spatially Resolved Single-cell Data with STELLAR
 
-PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type discovery and identification in spatially resolved single-cell datasets. For a detailed description of the algorithm, please see our manuscript [Annotation of Spatially Resolved Single-cell Data with STELLAR](https://www.biorxiv.org/content/10.1101/2021.11.24.469947v1.full.pdf).
+PyTorch implementation of STELLAR, a geometric deep learning tool for cell-type discovery and identification in spatially resolved single-cell datasets. STELLAR takes as input annotated reference spatial single-cell dataset in which cells are assigned to their cell types, and unannotated spatial dataset in which cell types are unknown. STELLAR then generates annotations for the unannotated dataset. For a detailed description of the algorithm, please see our manuscript [Annotation of Spatially Resolved Single-cell Data with STELLAR](https://www.biorxiv.org/content/10.1101/2021.11.24.469947v1.full.pdf).
 
 
 <p align="center">
@@ -40,7 +40,7 @@ Please run the following command to install additional packages that are provide
 pip install -r requirements.txt
 ```
 
-**Note:** We tested STELLAR with NVIDIA GPU, Linux, Python3. In particular, on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU and 1T CPU memory. 
+**Note:** We tested STELLAR with NVIDIA GPU, Linux, Python3. In particular, on Ubuntu 16.04 with NVIDIA Geforce 2080 Ti GPU and 1T CPU memory. We additionally tested the code on macOS (Intel chip).
 
 ### Getting started
 
