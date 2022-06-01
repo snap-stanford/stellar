@@ -16,6 +16,7 @@ class STELLAR:
     def __init__(self, args, dataset):
         self.args = args
         self.dataset = dataset
+        args.input_dim = dataset.unlabeled_data.x.shape[-1]
         self.model = models.Encoder(args.input_dim, args.num_heads)
         self.model = self.model.to(args.device)
 

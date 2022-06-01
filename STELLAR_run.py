@@ -14,7 +14,6 @@ def main():
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--wd', type=float, default=5e-2)
-    parser.add_argument('--input-dim', type=int, default=48)
     parser.add_argument('--num-heads', type=int, default=22)
     parser.add_argument('--num-seed-class', type=int, default=0)
     parser.add_argument('--sample-rate', type=float, default=0.5)

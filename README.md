@@ -62,13 +62,13 @@ We provide several training examples with this repo:
 - To run STELLAR on the CODEX healthy intestine data
 
 ```bash
-python STELLAR_run.py --dataset Hubmap --input-dim 48 --num-heads 22
+python STELLAR_run.py --dataset Hubmap --num-heads 22
 ```
 
 - To run STELLAR on the CODEX tonsil and BE data:
 
 ```bash
-python STELLAR_run.py --dataset TonsilBE --input-dim 44 --num-heads 13 --num-seed-class 3
+python STELLAR_run.py --dataset TonsilBE --num-heads 13 --num-seed-class 3
 ```
 Memory usage and time:
 -  Graph construction takes 32G physical memory for the HuBMAP dataset and 256G for Tonsil/BE. The longest construction takes around 10 minutes.
