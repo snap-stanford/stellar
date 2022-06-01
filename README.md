@@ -35,7 +35,7 @@ conda install pyg -c pyg
 
 **4. Other dependencies:**
 
-Please run the following command to install additional packages.
+Please run the following command to install additional packages that are provided in [requirements.txt](https://github.com/snap-stanford/stellar/blob/main/requirements.txt).
 ```bash
 pip install -r requirements.txt
 ```
