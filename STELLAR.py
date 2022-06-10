@@ -41,10 +41,7 @@ class STELLAR:
             sum_loss += loss.item()
             loss.backward()
             optimizer.step()
-            
-            if batch_idx % (len(labeled_loader) // 4) == 0:
-                print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)
-                ))
+        print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)))
 
     def est_seeds(self, args, model, device, dataset, clusters, num_seed_class):
         model.eval()
@@ -144,9 +141,7 @@ class STELLAR:
             loss.backward()
             optimizer.step()
 
-            if batch_idx % (len(labeled_loader) // 4) == 0:
-                print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)
-                ))
+        print('Loss: {:.6f}'.format(sum_loss / (batch_idx + 1)))
 
 
     def pred(self):

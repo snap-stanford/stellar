@@ -6,6 +6,7 @@ from sklearn.metrics import pairwise_distances
 import pandas as pd
 
 def get_hubmap_edge_index(pos, regions, distance_thres):
+    # construct edge indexes when there is region information
     edge_list = []
     regions_unique = np.unique(regions)
     for reg in regions_unique:
@@ -20,6 +21,7 @@ def get_hubmap_edge_index(pos, regions, distance_thres):
     return edge_list
 
 def get_tonsilbe_edge_index(pos, distance_thres):
+    # construct edge indexes in one region
     edge_list = []
     dists = pairwise_distances(pos)
     dists_mask = dists < distance_thres
@@ -34,14 +36,15 @@ def load_hubmap_data(labeled_file, unlabeled_file, distance_thres, sample_rate):
     test_df = test_df.sample(n=round(sample_rate*len(test_df)), random_state=1)
     train_df = train_df.loc[np.logical_and(train_df['tissue'] == 'CL', train_df['donor'] == 'B004')]
     test_df = test_df.loc[np.logical_and(test_df['tissue'] == 'CL', test_df['donor'] == 'B005')]
-    train_X = train_df.iloc[:, 1:49].values
+    train_X = train_df.iloc[:, 1:49].values # node features, indexes depend on specific datasets
     test_X = test_df.iloc[:, 1:49].values
-    labeled_pos = train_df.iloc[:, -6:-4].values
+    labeled_pos = train_df.iloc[:, -6:-4].values # x,y coordinates, indexes depend on specific datasets
     unlabeled_pos = test_df.iloc[:, -5:-3].values
     labeled_regions = train_df['unique_region']
     unlabeled_regions = test_df['unique_region']
-    train_y = train_df['cell_type_A']
+    train_y = train_df['cell_type_A'] # class information
     cell_types = np.sort(list(set(train_df['cell_type_A'].values))).tolist()
+    # we here map class in texts to categorical numbers and also save an inverse_dict to map the numbers back to texts
     cell_type_dict = {}
     inverse_dict = {}    
     for i, cell_type in enumerate(cell_types):
