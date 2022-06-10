@@ -53,7 +53,7 @@ _, results = stellar.pred()
 ```
 ### Datasets
 
-CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ `.
+CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ ` you create.
 
 ### Demo
 
@@ -71,25 +71,25 @@ python STELLAR_run.py --dataset Hubmap --num-heads 22
 python STELLAR_run.py --dataset TonsilBE --num-heads 13 --num-seed-class 3
 ```
 Memory usage and time:
--  Graph construction takes 32G physical memory for the HuBMAP dataset and 256G for Tonsil/BE. The longest construction takes around 10 minutes.
--  Running the algorithm on GPU takes less then 5G memory for both datasets and can finish within a few minutes.
+-  STELLAR expects graph as input. There are many ways to construct a graph. In this code, we construct a graph based on a predefined threshold. This part takes 32G physical memory for the HuBMAP dataset and 256G for Tonsil/BE. The longest construction takes around 10 minutes.
+-  Given a graph, running STELLAR on GPU takes less then 5G memory for both datasets and can finish within a few minutes.
 
 We also provided a jupyter notebook [demo.ipynb](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/demo.ipynb) that shows example of running STELLAR on a downsampled dataset. Please consider to downsample more if there is a memory issue, but note that the performance of the model would degrade as the training data gets less. For users with limited memory and potentially limited access to GPU, please set the ``use-processed-graph`` to True to load pre-processsed data and can finish with CPU in about 30 mins.
 
 ### Use your own dataset
 
-To use your own dataset, you just need to initialize [GraphDataset](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L77) and give it to the input to our [stellar function](https://github.com/snap-stanford/stellar/blob/main/STELLAR.py).
+STELLAR expects graph as input. In our code, we construct a graph based on a predefined threshold, but STELLAR can work with any meaninfully constructed graph. To use your own dataset, you just need to initialize [GraphDataset](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L77) and give it to the input to our [stellar function](https://github.com/snap-stanford/stellar/blob/main/STELLAR.py).
 
 ```
 dataset = GraphDataset(labeled_X, labeled_y, unlabeled_X, labeled_edges, unlabeled_edges)
 stellar = STELLAR(args, dataset)
 ```
 
-- labeled_X and unlabeled_X are node features matrices for the annotated reference dataset and target unannotated dataset, respectively. They should  have a shape [num_nodes, num_node_features] 
-- labeled_y defines annotations for the annotated reference dataset with shape [num_nodes,] 
-- labeled_edges and unlabeled_edges define the input graphs for the annotated reference dataset and target unannotated dataset, respectively. They should have a shape [2, num_edges] and they define edges of the graph
+- labeled_X and unlabeled_X are node features (that is gene/protein expressions) matrices for the annotated reference dataset and target unannotated dataset, respectively. They should be numpy arrays with shape [num_nodes, num_node_features] (that is  [num_cells, num_genes]). 
+- labeled_y defines annotations for the annotated reference dataset. It is a numpy array with shape [num_nodes,] (that is [num_cells]). Annotations are expected to be numerical class categories.
+- labeled_edges and unlabeled_edges define the input graphs for the annotated reference dataset and target unannotated dataset, respectively. They are numpy array with a shape [2, num_edges] and they define edges of the graph. For each edge, the indices of the nodes that are connected with that edge should be given.
 
-Example for HuBMAP dataset is shown in [load_hubmap_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L30) function, and for Tonsil/BE dataset in [load_tonsilbe_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L53).
+Example for HuBMAP dataset is shown in [load_hubmap_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L30) function, and for Tonsil/BE dataset in [load_tonsilbe_data](https://github.com/snap-stanford/stellar/blob/a556b5ef4fe43c512ccf092c1d06d73034dc8d4d/datasets.py#L53). These examples demonstrate how to  initialize these variables from a csv file. 
 
 
 ### Citing
