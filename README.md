@@ -55,7 +55,7 @@ _, results = stellar.pred()
 ```
 ### Datasets
 
-CODEX multiplexed imaging datasets from healthy human tonsil and Barrett’s esophagus data are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ ` you create.
+CODEX multiplexed imaging datasets used in STELLAR are made available at [dryad](https://datadryad.org/stash/share/1OQtxew0Unh3iAdP-ELew-ctwuPTBz6Oy8uuyxqliZk). Our demo code assumes the data to be put under the folder `./data/ ` you create.
 
 ### Demo
 
