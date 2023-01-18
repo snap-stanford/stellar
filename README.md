@@ -99,10 +99,14 @@ Example for HuBMAP dataset is shown in [load_hubmap_data](https://github.com/sna
 If you find our code and research useful, please consider citing:
 
 ```
-@article{stellar2021,
-  title={Annotation of Spatially Resolved Single-cell Data with STELLAR},
-  author={Brbic, Maria and Cao, Kaidi and Hickey, John W and Tan, Yuqi and Snyder, Michael and Nolan, Garry P and Leskovec, Jure},
-  journal={bioRxiv},
-  year={2021},
+@article{stellar2022,
+  title={Annotation of spatially resolved single-cell data with STELLAR},
+  author={Brbi{\'c}, Maria and Cao, Kaidi and Hickey, John W and Tan, Yuqi and Snyder, Michael P and Nolan, Garry P and Leskovec, Jure},
+  journal={Nature Methods},
+  volume={19},
+  number={11},
+  pages={1411--1418},
+  year={2022},
+  publisher={Nature Publishing Group}
 }
 ```
